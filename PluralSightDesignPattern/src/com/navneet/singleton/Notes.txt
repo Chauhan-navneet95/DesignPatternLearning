@@ -1,0 +1,75 @@
+This is my notes file.
+
+
+public class DbSingleton {
+	private static DbSingleton instance= new DbSingleton();
+	
+	private DbSingleton() {
+		
+	}
+	public static DbSingleton getDbSingletonInstance() {
+		return instance;
+	}
+}
+
+The above design is what is called eagerly loaded,meaning we create atleast (and only) one instance whether we need it or not.
+
+Below design is called lazy loading.
+
+public class DbSingleton {
+	private static DbSingleton instance= null;
+	
+	private DbSingleton() {
+	}
+	public static DbSingleton getDbSingletonInstance() {
+		if(instance==null) {
+			instance = new DbSingleton();
+			return instance;
+		}
+		else {
+			return instance;
+		}
+	}
+}
+
+
+This can make performance better and your application can load up much faster and only uses resources that it needs.
+
+
+Let's now look at making it ThreadSafe.
+
+You can always mark the getDbSingletonInstance() method synchronize, so that it only processed by a single thread at a time.
+
+But It will make the application slow, since everytime we ask for a instance, It will synchronize the class and slows it down completely.
+ 
+ Instead what we do is below:
+ we mark the field as volatile, sa as to prevent reflection from creating instance.
+ (The value of a volatile variable will never be stored in the cache. All read and write will be done from and to the main memory.)
+ 
+ public class DbSingleton {
+	private static volatile DbSingleton instance= null;
+	
+	private DbSingleton() {
+		//Stop reflection to crate a instance
+		if(instance==null) {
+			throw new RuntimeException("Use getDbSingletonInstance() method to create instance");
+		}
+		
+	}
+	public static DbSingleton getDbSingletonInstance() {
+		if(instance==null) {
+			synchronized(DbSingleton.class) {
+			if(instance==null) {
+				instance = new DbSingleton();
+				return instance;
+				}
+			else {
+				return instance;
+			}
+			}
+		}
+		else {
+			return instance;
+		}
+	}
+}

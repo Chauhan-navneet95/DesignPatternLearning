@@ -1,0 +1,18 @@
+EveryDay Example -Object Clone
+
+public class Statement implements Cloneable{
+
+	public Statement(Stringsql, List<String> parameters, Record record){
+	this.sql=sql;
+	this.parameters=parameters;
+	this.record=record;
+	}
+	public Statement clone(){
+	try{
+	return (Statement) super.clone();
+	} catch(CloneNotSupportedException e){
+	sysout(e.printStackTrace();
+	}
+	return null;
+	}
+}
